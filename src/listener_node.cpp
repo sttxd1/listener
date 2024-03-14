@@ -12,13 +12,16 @@ Listener::Listener(const rclcpp::NodeOptions & options) : Node("listener", optio
     }
 
     // Subscribe to the image topic using a hard-coded topic name
-    image_sub_ = image_transport::create_subscription(this,
-                                                    image_topic_,
-                                                    std::bind(&Listener::ImageCallback, this, std::placeholders::_1),
-                                                    image_transport,
-                                                    rmw_qos_profile_sensor_data);
+    // image_sub_ = image_transport::create_subscription(this,
+    //                                                 "/camera/color/image_raw/compressed",
+    //                                                 std::bind(&Listener::ImageCallback, this, std::placeholders::_1),
+    //                                                 image_transport);
 
-    RCLCPP_INFO(this->get_logger(), "Subscribed to image topic: %s", image_topic_.c_str());
+    image_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>(
+    "/camera/color/image_raw/compressed", rclcpp::SensorDataQoS(),
+    std::bind(&Listener::ImageCallback, this, std::placeholders::_1));
+
+    RCLCPP_INFO(this->get_logger(), "Subscribed to image topic: /camera/color/image_raw/compressed");
 
     // Subscribe to the IMU topic
     // imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
@@ -31,9 +34,15 @@ Listener::Listener(const rclcpp::NodeOptions & options) : Node("listener", optio
     RCLCPP_INFO(this->get_logger(), "Subscribed to IMU topic: /camera/imu");
 }
 
-void Listener::ImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & image_msg) {
+void Listener::ImageCallback(const sensor_msgs::msg::CompressedImage::ConstSharedPtr & image_msg) {
     //image processing logic here
-    RCLCPP_INFO(this->get_logger(), "Received image message");
+    cv::Mat cv_image = cv::imdecode(cv::Mat(image_msg->data), cv::IMREAD_COLOR);
+
+        if (!cv_image.empty()) {
+            // Convert cv::Mat to sensor_msgs/msg/Image
+            sensor_msgs::msg::Image::SharedPtr img_msg = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", cv_image).toImageMsg();
+
+    RCLCPP_INFO(this->get_logger(), "Received image message");}
 }
 
 void Listener::ImuCallback(const sensor_msgs::msg::Imu::ConstSharedPtr & imu_msg) {
