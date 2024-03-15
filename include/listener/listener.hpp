@@ -9,6 +9,7 @@
 #include "image_transport/image_transport.hpp"
 #include "sensor_msgs/msg/imu.hpp" // Include IMU message header
 #include "sensor_msgs/msg/compressed_image.hpp"
+#include "sensor_msgs/msg/image.hpp"
 #include "boost/lexical_cast.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -26,7 +27,9 @@ private:
 
   // Subscriber for image messages
   // image_transport::Subscriber image_sub_;
-  rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr image_sub_;
+  rclcpp::Subscription<sensor_msgs::msg::CompressedImage>::SharedPtr color_compressed_sub_;
+
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr color_sub_;
 
   // New subscriber for IMU messages
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
