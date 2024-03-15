@@ -12,10 +12,10 @@ Listener::Listener(const rclcpp::NodeOptions & options) : Node("listener", optio
     }
 
     // Subscribe to the image topic using a hard-coded topic name
-    // image_sub_ = image_transport::create_subscription(this,
-    //                                                 "/camera/color/image_raw/compressed",
-    //                                                 std::bind(&Listener::ImageCallback, this, std::placeholders::_1),
-    //                                                 image_transport);
+    image_sub_ = image_transport::create_subscription(this,
+                                                    "/camera/color/image_raw/compressed",
+                                                    std::bind(&Listener::ImageCallback, this, std::placeholders::_1),
+                                                    image_transport);
 
     image_sub_ = this->create_subscription<sensor_msgs::msg::CompressedImage>(
     "/camera/color/image_raw/compressed", rclcpp::SensorDataQoS(),
