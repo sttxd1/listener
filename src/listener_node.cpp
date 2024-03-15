@@ -17,9 +17,14 @@ Listener::Listener(const rclcpp::NodeOptions & options) : Node("listener", optio
                                                     std::bind(&Listener::ImageCallback, this, std::placeholders::_1),
                                                     image_transport,
                                                     rmw_qos_profile_sensor_data);
+    depth_sub_ = image_transport::create_subscription(this,
+                                                    depth_topic_,
+                                                    std::bind(&Listener::DepthCallback, this, std::placeholders::_1),
+                                                    image_transport,
+                                                    rmw_qos_profile_sensor_data);
 
     RCLCPP_INFO(this->get_logger(), "Subscribed to image topic: %s", image_topic_.c_str());
-
+    RCLCPP_INFO(this->get_logger(), "Subscribed to image topic: %s", depth_topic_.c_str());
     // Subscribe to the IMU topic
     // imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
     //     "/camera/imu", 10, std::bind(&Listener::ImuCallback, this, std::placeholders::_1),rmw_qos_profile_sensor_data);
@@ -27,7 +32,10 @@ Listener::Listener(const rclcpp::NodeOptions & options) : Node("listener", optio
     imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
     "/camera/imu", rclcpp::SensorDataQoS(), std::bind(&Listener::ImuCallback, this, std::placeholders::_1));
 
+    cameraInfo_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>(
+    "/camera/color/camera_info", rclcpp::SensorDataQoS(), std::bind(&Listener::InfoCallback, this, std::placeholders::_1));
 
+    RCLCPP_INFO(this->get_logger(), "Subscribed to Info topic: /camera/color/camera_info");
     RCLCPP_INFO(this->get_logger(), "Subscribed to IMU topic: /camera/imu");
 }
 
@@ -36,7 +44,17 @@ void Listener::ImageCallback(const sensor_msgs::msg::Image::ConstSharedPtr & ima
     RCLCPP_INFO(this->get_logger(), "Received image message");
 }
 
+void Listener::DepthCallback(const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg) {
+    //image processing logic here
+    RCLCPP_INFO(this->get_logger(), "Received depth message");
+}
+
 void Listener::ImuCallback(const sensor_msgs::msg::Imu::ConstSharedPtr & imu_msg) {
+    //IMU processing logic here
+    RCLCPP_INFO(this->get_logger(), "Received IMU message");
+}
+
+void Listener::InfoCallback(const sensor_msgs::msg::CameraInfo & cameraInfo_msg) {
     //IMU processing logic here
     RCLCPP_INFO(this->get_logger(), "Received IMU message");
 }

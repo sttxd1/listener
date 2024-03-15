@@ -15,7 +15,7 @@ def generate_launch_description():
             description='Prefix for output PNG files'),
         DeclareLaunchArgument(
             'compressed',
-            default_value='True',
+            default_value='False',
             description='Use Compressed Image Transport'),
 
         Node(
