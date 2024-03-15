@@ -23,7 +23,7 @@ private:
   //
   void DepthCallback(const sensor_msgs::msg::Image::ConstSharedPtr & depth_msg);
 
-  void InfoCallback(const sensor_msgs::msg::CameraInfo & cameraInfo_msg);
+  void InfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & cameraInfo_msg);
 
   // Subscriber for image messages
   image_transport::Subscriber image_sub_;

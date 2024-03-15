@@ -54,9 +54,9 @@ void Listener::ImuCallback(const sensor_msgs::msg::Imu::ConstSharedPtr & imu_msg
     RCLCPP_INFO(this->get_logger(), "Received IMU message");
 }
 
-void Listener::InfoCallback(const sensor_msgs::msg::CameraInfo & cameraInfo_msg) {
+void Listener::InfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr & cameraInfo_msg) {
     //IMU processing logic here
-    RCLCPP_INFO(this->get_logger(), "Received IMU message");
+    RCLCPP_INFO(this->get_logger(), "Received Info message");
 }
 
 #include <rclcpp_components/register_node_macro.hpp>
